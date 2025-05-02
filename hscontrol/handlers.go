@@ -1,9 +1,10 @@
 package hscontrol
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bytedance/sonic"
+	"github.com/bytedance/sonic/encoder"
 	"io"
 	"net/http"
 	"strconv"
@@ -90,7 +91,7 @@ func (h *Headscale) derpRequestIsAllowed(
 	}
 
 	var derpAdmitClientRequest tailcfg.DERPAdmitClientRequest
-	if err := json.Unmarshal(body, &derpAdmitClientRequest); err != nil {
+	if err := sonic.Unmarshal(body, &derpAdmitClientRequest); err != nil {
 		return false, fmt.Errorf("cannot parse derpAdmitClientRequest: %w", err)
 	}
 
@@ -123,7 +124,8 @@ func (h *Headscale) VerifyHandler(
 	}
 
 	writer.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode(resp)
+	bytes, err := encoder.Encode(resp, encoder.NoEncoderNewline)
+	writer.Write(bytes)
 }
 
 // KeyHandler provides the Headscale pub key
@@ -145,8 +147,8 @@ func (h *Headscale) KeyHandler(
 			PublicKey: h.noisePrivateKey.Public(),
 		}
 		writer.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(writer).Encode(resp)
-
+		bytes, _ := encoder.Encode(resp, encoder.NoEncoderNewline)
+		writer.Write(bytes)
 		return
 	}
 }
@@ -169,7 +171,8 @@ func (h *Headscale) HealthHandler(
 			res.Status = "fail"
 		}
 
-		json.NewEncoder(writer).Encode(res)
+		bytes, err := encoder.Encode(res, encoder.NoEncoderNewline)
+		writer.Write(bytes)
 	}
 
 	if err := h.db.PingDB(req.Context()); err != nil {

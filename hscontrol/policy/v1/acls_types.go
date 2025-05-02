@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"encoding/json"
+	"github.com/bytedance/sonic"
 	"net/netip"
 	"strings"
 
@@ -69,7 +69,7 @@ func (hosts *Hosts) UnmarshalJSON(data []byte) error {
 	}
 	ast.Standardize()
 	data = ast.Pack()
-	err = json.Unmarshal(data, &hostIPPrefixMap)
+	err = sonic.Unmarshal(data, &hostIPPrefixMap)
 	if err != nil {
 		return err
 	}

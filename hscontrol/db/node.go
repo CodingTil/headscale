@@ -1,9 +1,9 @@
 package db
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"net/netip"
 	"slices"
 	"sort"
@@ -212,7 +212,7 @@ func SetTags(
 
 	slices.Sort(tags)
 	tags = slices.Compact(tags)
-	b, err := json.Marshal(tags)
+	b, err := sonic.Marshal(tags)
 	if err != nil {
 		return err
 	}
@@ -239,7 +239,7 @@ func SetApprovedRoutes(
 		return nil
 	}
 
-	b, err := json.Marshal(routes)
+	b, err := sonic.Marshal(routes)
 	if err != nil {
 		return err
 	}

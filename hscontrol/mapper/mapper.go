@@ -2,8 +2,8 @@ package mapper
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"io/fs"
 	"net/url"
 	"os"
@@ -341,7 +341,7 @@ func (m *Mapper) marshalMapResponse(
 ) ([]byte, error) {
 	atomic.AddUint64(&m.seq, 1)
 
-	jsonBody, err := json.Marshal(resp)
+	jsonBody, err := sonic.Marshal(resp)
 	if err != nil {
 		return nil, fmt.Errorf("marshalling map response: %w", err)
 	}
@@ -368,7 +368,7 @@ func (m *Mapper) marshalMapResponse(
 			responseType = "removed"
 		}
 
-		body, err := json.MarshalIndent(data, "", "  ")
+		body, err := sonic.MarshalIndent(data, "", "  ")
 		if err != nil {
 			return nil, fmt.Errorf("marshalling map response: %w", err)
 		}

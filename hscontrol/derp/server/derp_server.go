@@ -3,8 +3,8 @@ package server
 import (
 	"bufio"
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic/encoder"
 	"net"
 	"net/http"
 	"net/netip"
@@ -293,13 +293,14 @@ func DERPBootstrapDNSHandler(
 		}
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
-		err := json.NewEncoder(writer).Encode(dnsEntries)
+		bytes, err := encoder.Encode(dnsEntries, encoder.SortMapKeys)
 		if err != nil {
 			log.Error().
 				Caller().
 				Err(err).
 				Msg("Failed to write response")
 		}
+		writer.Write(bytes)
 	}
 }
 

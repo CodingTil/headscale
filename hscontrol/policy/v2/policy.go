@@ -1,8 +1,8 @@
 package v2
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"net/netip"
 	"strings"
 	"sync"
@@ -245,7 +245,7 @@ func (pm *PolicyManager) DebugString() string {
 	sb.WriteString("\n\n")
 
 	if pm.pol != nil {
-		pol, err := json.MarshalIndent(pm.pol, "", "  ")
+		pol, err := sonic.MarshalIndent(pm.pol, "", "  ")
 		if err == nil {
 			sb.WriteString("Policy:\n")
 			sb.Write(pol)
@@ -273,7 +273,7 @@ func (pm *PolicyManager) DebugString() string {
 
 	sb.WriteString("\n\n")
 	if pm.filter != nil {
-		filter, err := json.MarshalIndent(pm.filter, "", "  ")
+		filter, err := sonic.MarshalIndent(pm.filter, "", "  ")
 		if err == nil {
 			sb.WriteString("Compiled filter:\n")
 			sb.Write(filter)

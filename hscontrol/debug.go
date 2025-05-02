@@ -1,8 +1,8 @@
 package hscontrol
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"net/http"
 
 	"github.com/arl/statsviz"
@@ -20,7 +20,7 @@ func (h *Headscale) debugHTTPServer() *http.Server {
 		w.Write([]byte(h.nodeNotifier.String()))
 	}))
 	debug.Handle("config", "Current configuration", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		config, err := json.MarshalIndent(h.cfg, "", "  ")
+		config, err := sonic.MarshalIndent(h.cfg, "", "  ")
 		if err != nil {
 			httpError(w, err)
 			return
@@ -42,7 +42,7 @@ func (h *Headscale) debugHTTPServer() *http.Server {
 	debug.Handle("filter", "Current filter", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		filter, _ := h.polMan.Filter()
 
-		filterJSON, err := json.MarshalIndent(filter, "", "  ")
+		filterJSON, err := sonic.MarshalIndent(filter, "", "  ")
 		if err != nil {
 			httpError(w, err)
 			return
@@ -69,7 +69,7 @@ func (h *Headscale) debugHTTPServer() *http.Server {
 			sshPol[fmt.Sprintf("id:%d  hostname:%s givenname:%s", node.ID, node.Hostname, node.GivenName)] = pol
 		}
 
-		sshJSON, err := json.MarshalIndent(sshPol, "", "  ")
+		sshJSON, err := sonic.MarshalIndent(sshPol, "", "  ")
 		if err != nil {
 			httpError(w, err)
 			return
@@ -81,7 +81,7 @@ func (h *Headscale) debugHTTPServer() *http.Server {
 	debug.Handle("derpmap", "Current DERPMap", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		dm := h.DERPMap
 
-		dmJSON, err := json.MarshalIndent(dm, "", "  ")
+		dmJSON, err := sonic.MarshalIndent(dm, "", "  ")
 		if err != nil {
 			httpError(w, err)
 			return
@@ -91,7 +91,7 @@ func (h *Headscale) debugHTTPServer() *http.Server {
 		w.Write(dmJSON)
 	}))
 	debug.Handle("registration-cache", "Pending registrations", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		registrationsJSON, err := json.MarshalIndent(h.registrationCache.Items(), "", "  ")
+		registrationsJSON, err := sonic.MarshalIndent(h.registrationCache.Items(), "", "  ")
 		if err != nil {
 			httpError(w, err)
 			return

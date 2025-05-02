@@ -3,8 +3,8 @@ package main
 //go:generate go run main.go
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"io"
 	"log"
 	"net/http"
@@ -42,7 +42,7 @@ func getCapabilityVersions() (map[string]tailcfg.CapabilityVersion, error) {
 	}
 
 	var releases []Release
-	err = json.Unmarshal(body, &releases)
+	err = sonic.Unmarshal(body, &releases)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling JSON: %w", err)
 	}

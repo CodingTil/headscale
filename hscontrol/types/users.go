@@ -3,8 +3,8 @@ package types
 import (
 	"cmp"
 	"database/sql"
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"net/mail"
 	"net/url"
 	"strconv"
@@ -158,7 +158,7 @@ type FlexibleBoolean bool
 
 func (bit *FlexibleBoolean) UnmarshalJSON(data []byte) error {
 	var val any
-	err := json.Unmarshal(data, &val)
+	err := sonic.Unmarshal(data, &val)
 	if err != nil {
 		return fmt.Errorf("could not unmarshal data: %w", err)
 	}

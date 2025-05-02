@@ -1,9 +1,10 @@
 package v2
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic"
+	"github.com/bytedance/sonic/decoder"
+	"github.com/tailscale/hujson"
 	"net/netip"
 	"strings"
 	"time"
@@ -12,7 +13,6 @@ import (
 
 	"github.com/juanfont/headscale/hscontrol/types"
 	"github.com/juanfont/headscale/hscontrol/util"
-	"github.com/tailscale/hujson"
 	"go4.org/netipx"
 	"tailscale.com/net/tsaddr"
 	"tailscale.com/tailcfg"
@@ -439,7 +439,7 @@ type AliasWithPorts struct {
 
 func (ve *AliasWithPorts) UnmarshalJSON(b []byte) error {
 	// TODO(kradalby): use encoding/json/v2 (go-json-experiment)
-	dec := json.NewDecoder(bytes.NewReader(b))
+	dec := decoder.NewDecoder(string(b))
 	var v any
 	if err := dec.Decode(&v); err != nil {
 		return err
@@ -555,7 +555,7 @@ type Aliases []Alias
 
 func (a *Aliases) UnmarshalJSON(b []byte) error {
 	var aliases []AliasEnc
-	err := json.Unmarshal(b, &aliases)
+	err := sonic.Unmarshal(b, &aliases)
 	if err != nil {
 		return err
 	}
@@ -594,7 +594,7 @@ func unmarshalPointer[T any](
 	parseFunc func(string) (T, error),
 ) (T, error) {
 	var s string
-	err := json.Unmarshal(b, &s)
+	err := sonic.Unmarshal(b, &s)
 	if err != nil {
 		var t T
 		return t, err
@@ -613,7 +613,7 @@ type AutoApprovers []AutoApprover
 
 func (aa *AutoApprovers) UnmarshalJSON(b []byte) error {
 	var autoApprovers []AutoApproverEnc
-	err := json.Unmarshal(b, &autoApprovers)
+	err := sonic.Unmarshal(b, &autoApprovers)
 	if err != nil {
 		return err
 	}
@@ -682,7 +682,7 @@ type Owners []Owner
 
 func (o *Owners) UnmarshalJSON(b []byte) error {
 	var owners []OwnerEnc
-	err := json.Unmarshal(b, &owners)
+	err := sonic.Unmarshal(b, &owners)
 	if err != nil {
 		return err
 	}
@@ -720,7 +720,7 @@ type Groups map[Group]Usernames
 // with "group:". If any group name is invalid, an error is returned.
 func (g *Groups) UnmarshalJSON(b []byte) error {
 	var rawGroups map[string][]string
-	if err := json.Unmarshal(b, &rawGroups); err != nil {
+	if err := sonic.Unmarshal(b, &rawGroups); err != nil {
 		return err
 	}
 
@@ -755,7 +755,7 @@ type Hosts map[Host]Prefix
 
 func (h *Hosts) UnmarshalJSON(b []byte) error {
 	var rawHosts map[string]string
-	if err := json.Unmarshal(b, &rawHosts); err != nil {
+	if err := sonic.Unmarshal(b, &rawHosts); err != nil {
 		return err
 	}
 
@@ -989,7 +989,7 @@ type SSHSrcAliases []Alias
 
 func (a *SSHSrcAliases) UnmarshalJSON(b []byte) error {
 	var aliases []AliasEnc
-	err := json.Unmarshal(b, &aliases)
+	err := sonic.Unmarshal(b, &aliases)
 	if err != nil {
 		return err
 	}
@@ -1028,7 +1028,7 @@ type SSHDstAliases []Alias
 
 func (a *SSHDstAliases) UnmarshalJSON(b []byte) error {
 	var aliases []AliasEnc
-	err := json.Unmarshal(b, &aliases)
+	err := sonic.Unmarshal(b, &aliases)
 	if err != nil {
 		return err
 	}
@@ -1075,7 +1075,7 @@ func unmarshalPolicy(b []byte) (*Policy, error) {
 	ast.Standardize()
 	acl := ast.Pack()
 
-	if err = json.Unmarshal(acl, &policy); err != nil {
+	if err = sonic.Unmarshal(acl, &policy); err != nil {
 		return nil, fmt.Errorf("parsing policy from bytes: %w", err)
 	}
 

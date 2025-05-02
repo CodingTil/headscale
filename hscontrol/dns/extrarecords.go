@@ -2,8 +2,8 @@ package dns
 
 import (
 	"crypto/sha256"
-	"encoding/json"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"os"
 	"sync"
 
@@ -183,7 +183,7 @@ func readExtraRecordsFromPath(path string) ([]tailcfg.DNSRecord, [32]byte, error
 	}
 
 	var records []tailcfg.DNSRecord
-	err = json.Unmarshal(b, &records)
+	err = sonic.Unmarshal(b, &records)
 	if err != nil {
 		return nil, [32]byte{}, fmt.Errorf("unmarshalling records, content: %q: %w", string(b), err)
 	}

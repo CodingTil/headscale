@@ -2,9 +2,9 @@ package hscontrol
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"io"
 	"net/http"
 
@@ -125,7 +125,7 @@ func (ns *noiseServer) earlyNoise(protocolVersion int, writer io.Writer) error {
 		return unsupportedClientError(tailcfg.CapabilityVersion(protocolVersion))
 	}
 
-	earlyJSON, err := json.Marshal(&tailcfg.EarlyNoise{
+	earlyJSON, err := sonic.Marshal(&tailcfg.EarlyNoise{
 		NodeKeyChallenge: ns.challenge.Public(),
 	})
 	if err != nil {
@@ -199,7 +199,7 @@ func (ns *noiseServer) NoisePollNetMapHandler(
 	body, _ := io.ReadAll(req.Body)
 
 	var mapRequest tailcfg.MapRequest
-	if err := json.Unmarshal(body, &mapRequest); err != nil {
+	if err := sonic.Unmarshal(body, &mapRequest); err != nil {
 		httpError(writer, err)
 		return
 	}
@@ -252,7 +252,7 @@ func (ns *noiseServer) NoiseRegistrationHandler(
 			return &tailcfg.RegisterRequest{}, regErr(err)
 		}
 		var regReq tailcfg.RegisterRequest
-		if err := json.Unmarshal(body, &regReq); err != nil {
+		if err := sonic.Unmarshal(body, &regReq); err != nil {
 			return &regReq, regErr(err)
 		}
 
@@ -279,7 +279,7 @@ func (ns *noiseServer) NoiseRegistrationHandler(
 		return
 	}
 
-	respBody, err := json.Marshal(registerResponse)
+	respBody, err := sonic.Marshal(registerResponse)
 	if err != nil {
 		httpError(writer, err)
 		return

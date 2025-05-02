@@ -2,7 +2,7 @@ package derp
 
 import (
 	"context"
-	"encoding/json"
+	"github.com/bytedance/sonic"
 	"io"
 	"net/http"
 	"net/url"
@@ -55,7 +55,7 @@ func loadDERPMapFromURL(addr url.URL) (*tailcfg.DERPMap, error) {
 	}
 
 	var derpMap tailcfg.DERPMap
-	err = json.Unmarshal(body, &derpMap)
+	err = sonic.Unmarshal(body, &derpMap)
 
 	return &derpMap, err
 }

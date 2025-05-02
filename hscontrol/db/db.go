@@ -3,9 +3,9 @@ package db
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"net/netip"
 	"path/filepath"
 	"slices"
@@ -460,7 +460,7 @@ func NewHeadscaleDatabase(
 					_ = tx.Migrator().AddColumn(&types.PreAuthKey{}, "tags")
 					for keyID, tags := range preauthkeyTags {
 						s := tags.Slice()
-						j, err := json.Marshal(s)
+						j, err := sonic.Marshal(s)
 						if err != nil {
 							return err
 						}
@@ -654,7 +654,7 @@ AND auth_key_id NOT IN (
 						tsaddr.SortPrefixes(routes)
 						routes = slices.Compact(routes)
 
-						data, err := json.Marshal(routes)
+						data, err := sonic.Marshal(routes)
 
 						err = tx.Model(&types.Node{}).Where("id = ?", nodeID).Update("approved_routes", data).Error
 						if err != nil {

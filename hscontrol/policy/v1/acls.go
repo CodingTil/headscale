@@ -1,9 +1,9 @@
 package v1
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"io"
 	"net/netip"
 	"os"
@@ -89,7 +89,7 @@ func LoadACLPolicyFromBytes(acl []byte) (*ACLPolicy, error) {
 	ast.Standardize()
 	acl = ast.Pack()
 
-	if err := json.Unmarshal(acl, &policy); err != nil {
+	if err := sonic.Unmarshal(acl, &policy); err != nil {
 		return nil, fmt.Errorf("unmarshalling policy, err: %w", err)
 	}
 
